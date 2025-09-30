@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Jogo: Batalha Naval (console)
-Autor: Template para trabalho de faculdade
+Autor: Ericles Magno 
 Rodar: python batalha_naval.py
 """
 
@@ -30,7 +30,7 @@ def create_empty_board():
     return [[0 for _ in range(BOARD_SIZE)] for _ in range(BOARD_SIZE)]
 
 def print_boards(player_board, tracking_board):
-    # Mostra lado a lado: seu tabuleiro (com navios) e o tabuleiro de rastreio (inimigo)
+    
     header = "   " + " ".join(f"{i:2}" for i in range(1, BOARD_SIZE+1))
     print("Seu tabuleiro:".ljust(34) + "Tabuleiro (rastreamento):")
     print(header.ljust(34) + header)
@@ -64,10 +64,7 @@ def display_tracking_cell(cell):
         return ". "
 
 def coords_from_input(inp):
-    """
-    Formato esperado: letra+numero, ex: A5, J10, b3
-    Retorna (row_index, col_index) ou None se inválido.
-    """
+    
     inp = inp.strip().upper()
     if len(inp) < 2:
         return None
@@ -136,7 +133,7 @@ def manual_place_ships(board, ship_specs):
         while True:
             entrada = input(f"Posicionamento para {name} ({size} células). Formato 'A1 H' ou 'random': ").strip()
             if entrada.lower() == 'random':
-                # fallback aleatório para esse navio
+                
                 orientation = random.choice(['H','V'])
                 if orientation == 'H':
                     row = random.randrange(0, BOARD_SIZE)
@@ -180,11 +177,11 @@ def check_shot(board, ship_positions, row, col):
     cell = board[row][col]
     if cell == 'S':
         board[row][col] = 'X'
-        # descobrir qual navio foi acertado
+        
         sunk_ship = None
         for name, coords in ship_positions.items():
             if (row,col) in coords:
-                # checar se todos os coords desse navio estão 'X'
+              
                 if all(board[r][c] == 'X' for (r,c) in coords):
                     sunk_ship = name
                 break
@@ -193,7 +190,7 @@ def check_shot(board, ship_positions, row, col):
         board[row][col] = 'O'
         return False, None
     else:
-        # já foi atingido antes
+        
         return None, None
 
 def all_ships_sunk(board, ship_positions):
@@ -204,7 +201,7 @@ def all_ships_sunk(board, ship_positions):
     return True
 
 def computer_choose_shot(tracking_board):
-    # Estratégia simples: escolher aleatório entre células não tentadas
+    
     choices = [(r,c) for r in range(BOARD_SIZE) for c in range(BOARD_SIZE) if tracking_board[r][c] == 0]
     return random.choice(choices) if choices else None
 
@@ -223,13 +220,13 @@ def input_player_shot(tracking_board):
 
 def main():
     print("=== BATALHA NAVAL ===")
-    # Criar tabuleiros
+   
     player_board = create_empty_board()
     computer_board = create_empty_board()
-    player_tracking = create_empty_board()  # mostra acertos/erros do player no adversário
-    computer_tracking = create_empty_board()  # opcional: pode usar para IA
+    player_tracking = create_empty_board()  
+    computer_tracking = create_empty_board()  
 
-    # Posicionar navios
+    
     escolha = input("Deseja posicionar seus navios manualmente? (s/N): ").strip().lower()
     if escolha == 's':
         player_ships = manual_place_ships(player_board, SHIP_SPECS)
@@ -239,7 +236,7 @@ def main():
     computer_ships = random_place_all_ships(computer_board, SHIP_SPECS)
     print("Navios posicionados. Começando o jogo!\n")
 
-    # Loop principal
+    
     player_turn = True
     while True:
         print_boards(player_board, player_tracking)
@@ -258,7 +255,7 @@ def main():
                 if all_ships_sunk(computer_board, computer_ships):
                     print("Parabéns — você venceu! Todos os navios inimigos foram afundados.")
                     break
-                # jogador pode continuar ou não? vamos alternar turnos (padrão alterna)
+                
             else:
                 player_tracking[r][c] = 'O'
                 print(f"ÁGUA. ({ROW_LETTERS[r]}{c+1})")
@@ -273,7 +270,7 @@ def main():
             print(f"Computador atira em {ROW_LETTERS[r]}{c+1}...")
             result, sunk = check_shot(player_board, player_ships, r, c)
             if result is None:
-                # deveria não acontecer, mas evita loop
+                
                 computer_tracking[r][c] = 'O'
                 print("Computador atirou onde já tinha atirado. Pulando.")
                 player_turn = True
@@ -286,8 +283,7 @@ def main():
                 if all_ships_sunk(player_board, player_ships):
                     print("O computador venceu. Seus navios foram todos afundados.")
                     break
-                # computaodr continua? vamos alternar por simplicidade
-                # Alternatively, could permitir múltiplos tiros ao acertar.
+                
                 player_turn = True
             else:
                 computer_tracking[r][c] = 'O'
